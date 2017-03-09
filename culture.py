@@ -31,6 +31,7 @@ def main(areaFile, provFolder, areaToUpdate, newCulture):
 		provRegex = re.compile(str(x)+' ?- ?')
 		for _file in os.listdir(provFolder):
 			if provRegex.match(_file):
+				_file = _file.replace(' ','\\ ')
 				command = "sed -i -E -- 's/culture = [a-z|-|_]+/culture = " + newCulture + "/g' " + provFolder + _file 
 				os.system(command)
 	
