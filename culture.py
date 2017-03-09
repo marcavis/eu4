@@ -5,9 +5,9 @@ import codecs, sys, re, os
 
 def main(areaFile, provFolder, areaToUpdate, newCulture):
 	areaRegex = re.compile('[a-z|_]*_area = {[\w\s]+}')
-	aareaRegex = re.compile('[a-z|_]*')
+	#aareaRegex = re.compile('[a-z|_]*')
 	myareas = codecs.open(areaFile, encoding="utf-8").readlines()
-	myareas = [x.strip() for x in myareas]
+	myareas = [x.strip() for x in myareas if '#' not in x]
 	myareas = "".join(myareas)
 	myareas = myareas.replace("\t"," ")
 	myareas = myareas.replace("}","}\n")
@@ -20,18 +20,19 @@ def main(areaFile, provFolder, areaToUpdate, newCulture):
 		if matched:
 			areaAndName = matched.group(0).split('=')
 			myAreaList[areaAndName[0].strip()] = areaAndName[1].strip().replace("{","").replace("}","").split(" ")
-	for x in myAreaList:
-		print x, myAreaList[x]
+	#for x in myAreaList:
+	#	print x, myAreaList[x]
 	
 	if '_area' not in areaToUpdate:
 		areaToUpdate = areaToUpdate + '_area'
-	print areaToUpdate
+	#print areaToUpdate
 	
 	for x in myAreaList[areaToUpdate]:
 		provRegex = re.compile(str(x)+' ?- ?')
 		for _file in os.listdir(provFolder):
 			if provRegex.match(_file):
-				print "sed -i -E -- 's/culture = [a-z|-|_]+/culture = " + newCulture + "/g' " + provFolder + _file 
+				command = "sed -i -E -- 's/culture = [a-z|-|_]+/culture = " + newCulture + "/g' " + provFolder + _file 
+				os.system(command)
 	
 	#provRegex = re.compile('[0-9]+ ?- ?')
 	#for z in range(1, 2800):
