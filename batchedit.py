@@ -25,9 +25,12 @@ def main(spreadsheet="changes.csv", provFolder=".", mode="update"):
 							else:
 								new_file.write(line)
 					elif mode == "add":
-						new_file.write(header[field + 1] + " = " + entries[e][field])
+						new_file.write(header[field + 1] + " = " + entries[e][field] + "\n")
 						for line in old_file:
 							new_file.write(line)
+					else:
+						print("Unknown mode: " + 	mode)
+						return
 			#Remove original file
 			os.remove(files[e])
 			#Move new file
@@ -40,6 +43,8 @@ if __name__ == "__main__":
 		main(sys.argv[1])
 	elif len(sys.argv) == 3:
 		main(sys.argv[1], sys.argv[2])
+	elif len(sys.argv) == 4:
+		main(sys.argv[1], sys.argv[2], sys.argv[3])
 	else:
 		print("Run this on a folder with a semicolon-separated file called changes.csv")
 		print("With parameters: ./batchedit.py <csv file, separated by ; semicolons, with province IDs and tradegoods>")
