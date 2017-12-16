@@ -3,7 +3,7 @@
 import codecs, sys, re, os, tempfile, shutil
 #usage: ./tagcheck.py <mod's 00_countries> <vanilla 00_countries>
 
-def main(spreadsheet="changes.csv", provFolder="."):
+def main(spreadsheet="changes.csv", provFolder=".", mode="update"):
 	sheet = codecs.open(spreadsheet, encoding="utf-8").readlines()
 	sheet = [x.strip().split(";") for x in sheet]
 	#print(provinces)
@@ -18,10 +18,15 @@ def main(spreadsheet="changes.csv", provFolder="."):
 			fh, abs_path = tempfile.mkstemp()
 			with os.fdopen(fh,'w') as new_file:
 				with open(files[e]) as old_file:
-					for line in old_file:
-						if (field < len(entries[e]) and len(entries[e][field].strip()) > 0):
-							new_file.write(re.sub(regexes[field][0], regexes[field][1] + entries[e][field], line))
-						else:
+					if mode == "update":
+						for line in old_file:
+							if (field < len(entries[e]) and len(entries[e][field].strip()) > 0):
+								new_file.write(re.sub(regexes[field][0], regexes[field][1] + entries[e][field], line))
+							else:
+								new_file.write(line)
+					elif mode == "add":
+						new_file.write(header[field + 1] + " = " + entries[e][field])
+						for line in old_file:
 							new_file.write(line)
 			#Remove original file
 			os.remove(files[e])
